@@ -20,6 +20,6 @@ async def echo(websocket, path):
         print(error)
 
 #start the websocket server and keep it running forever
-start_server = websockets.serve(echo, "192.168.0.46", PORT)
+start_server = websockets.serve(echo, "172.21.48.1", PORT)
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()

@@ -1,4 +1,5 @@
 #Server Echo
+import socket
 import websockets
 import asyncio
 import warnings
@@ -9,7 +10,7 @@ PORT = 7890
 print("Started listening on Port " + str(PORT))
 
 #define an asynchronous function to echo back what the client sends
-async def echo(websocket, path):
+async def server(websocket, path):
     print("A client has connected")
     try:
         async for message in websocket:
@@ -20,6 +21,6 @@ async def echo(websocket, path):
         print(error)
 
 #start the websocket server and keep it running forever
-start_server = websockets.serve(echo, "172.21.48.1", PORT)
+start_server = websockets.serve(server, "172.21.48.1", PORT)
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()

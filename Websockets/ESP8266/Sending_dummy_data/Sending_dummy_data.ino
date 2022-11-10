@@ -1,10 +1,9 @@
-// #include <Arduino.h>
+#include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFiMulti.h>
 #include <WebSocketsClient.h>
 #include <Hash.h>
 #include <ArduinoOTA.h>
-#include "C:\Users\jmorr\PycharmProjects\ESP-PG\secrets\esp_secrets.h"
 
 ESP8266WiFiMulti WiFiMulti; // Create an instance of the ESP8266WiFiMulti class, called 'wifiMulti'
 WebSocketsClient webSocket; //create a websocket 
@@ -41,7 +40,7 @@ void setup() {
 		delay(1000);
 	}
 
-	WiFiMulti.addAP(SSID, PASS); //ssid and password for wifi network
+	WiFiMulti.addAP("COGECO-CD3A0", "DF9CECOGECO"); //ssid and password for wifi network
 
 	//WiFi.disconnect();
 	while(WiFiMulti.run() != WL_CONNECTED) { //wait until we are connected to the wifi
@@ -49,7 +48,7 @@ void setup() {
 	}
 
 	// server address, port and URL
-	webSocket.begin(IP, 7890, "/");//connect to websocket server - This IP will change based on your machine
+	webSocket.begin("192.168.0.46", 7890, "/");//connect to websocket server - This IP will change based on your machine
 
 	// event handler
 	webSocket.onEvent(webSocketEvent); //fires any time anything happens with the websocket server.

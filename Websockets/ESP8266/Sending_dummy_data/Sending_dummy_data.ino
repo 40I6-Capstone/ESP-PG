@@ -1,10 +1,10 @@
-#include <Arduino.h>
+// #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFiMulti.h>
 #include <WebSocketsClient.h>
 #include <Hash.h>
 #include <ArduinoOTA.h>
-#include "../../secrets/esp_secrets.h"
+#include "C:\Users\jmorr\PycharmProjects\ESP-PG\secrets\esp_secrets.h"
 
 ESP8266WiFiMulti WiFiMulti; // Create an instance of the ESP8266WiFiMulti class, called 'wifiMulti'
 WebSocketsClient webSocket; //create a websocket 

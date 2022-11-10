@@ -6,7 +6,8 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)  #ignore deprecat
 async def listen():
     url = "ws://192.168.0.46:7890" #this is the local machine ip address with the port number
     async with websockets.connect(url) as ws: #connect to the server
-        await ws.send("Hello Server!") #Send a greeting message
+        await ws.send("Hello Server!") #Send a greeting message'
+        await ws.send_binary([100])
         # stay alive forever listening for messages
         while True:
             msg = await ws.recv()

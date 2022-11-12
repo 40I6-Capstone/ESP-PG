@@ -19,7 +19,8 @@ class Packet:
 
 
 class node_State(Packet):
-    def __init__(self, heading, velocity, X, Y, ts_ms, State):
+    def __init__(self,data, heading, velocity, X, Y, ts_ms, State):
+        self.data = data
         self.heading = heading
         self.velocity = velocity
         self.X = X

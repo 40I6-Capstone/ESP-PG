@@ -14,13 +14,17 @@ ts_ms = b'1000'
 State = b'1'
 data = [Heading,Velocity,X,Y,ts_ms,State]
 test = b'1'+ Heading + Velocity + X
-print(test)
-print(type(data))
-print(type(Heading))
-print(len(Heading))
-print(Heading[0:1])
+length = [1]
+print(range(len(length)-1))
+# print(data)
+# print(type(data))
+# print(test)
+# print(type(test))
+# print(type(Heading))
+# print(len(Heading))
+# print(Heading[0:1])
 
-H = test[1:9]
+# H = test[1:9]
 
 # Heading = 25.5
 # Velocity = 5.145

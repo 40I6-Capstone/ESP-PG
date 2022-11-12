@@ -1,8 +1,12 @@
-import websockets
+# import websockets
 import socket
 import asyncio
 import warnings
 import struct
+import Packet
+import Node
+import time
+
 warnings.filterwarnings("ignore", category=DeprecationWarning)  #ignore deprecation warnings
 
 async def listen(): #websocket library test
@@ -17,22 +21,28 @@ async def listen(): #websocket library test
 async def test(): #socket library test
     host = '10.0.0.187'
     port = 7890
+    # example Data for node_state:
+
+    Heading = b'30.64000'
+    Velocity = b'5.145000'
+    X = b'2.980000'
+    Y = b'103.5000'
+    ts_ms = b'10.00000'
+    State = b'1'
+    data = Heading+Velocity+X+Y+ts_ms+State
+    state_packet = Packet.Packet(data)
+
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, port))
-        heading = b'5.01'
+        heading = b'1'
         s.sendall(heading[0:1])
-        #s.sendall(b'Hello,world')
-        data = s.recv(1024)
-    print('Received: ', repr(data))
+        time.sleep(3)
+        s.sendall(state_packet.data)
+        output = s.recv(1024)
+    print('Received: ', repr(output))
 
 asyncio.get_event_loop().run_until_complete(test())
 
-# example Data for node_state:
-Heading = 25.5
-Velocity = 5.145
-X = 2.98
-Y = 103.5
-ts_ms = 1000
-State = 1
 
-data = [Heading,Velocity,X,Y,ts_ms,State]
+#
+

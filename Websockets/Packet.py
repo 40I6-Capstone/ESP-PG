@@ -28,27 +28,31 @@ class node_State(Packet):
         self.ts_ms = ts_ms
         self.State = State
     def convertData(self):
-        self.heading = self.data[1:9] # heading angle relative to start (double - 8 bytes)
-        self.velocity = self.data[9:17] # current velocity (double - 8 bytes)
-        self.X = self.data[17:25] # Estimated x position relative to start (double - 8 bytes)
-        self.Y = self.data[25:33] # Estimated y position relative to start (double - 8 bytes)
-        self.ts_ms = self.data[33:41] # time stamp in ms since start (uint64_t - 8 bytes)
-        self.State = self.data[41:42] # byte enumeration of node executing state (char - 1 byte)
+        self.heading = self.data[0:8] # heading angle relative to start (double - 8 bytes)
+        self.velocity = self.data[8:16] # current velocity (double - 8 bytes)
+        self.X = self.data[16:24] # Estimated x position relative to start (double - 8 bytes)
+        self.Y = self.data[24:32] # Estimated y position relative to start (double - 8 bytes)
+        self.ts_ms = self.data[32:40] # time stamp in ms since start (uint64_t - 8 bytes)
+        self.State = self.data[40:41] # byte enumeration of node executing state (char - 1 byte)
 
 
 class path_packet(Packet):
-     def __init__(self, x, y, ts_ms, v, heading):
+     def __init__(self, data, x, y, ts_ms, v, heading):
+         self.data = data
          self.x = x
          self.y = y
          self.ts_ms = ts_ms
          self.v = v
          self.heading = heading
      def convertData(self):
-         self.x = self.data[1:9]  # x position for path point (double - 8 bytes)
-         self.y = self.data[9:17]  # y position for path point (double - 8 bytes)
-         self.ts_ms = self.data[17:25]  # time stamp in ms of when this point should be hit (uint64_t - 8 bytes)
-         self.v = self.data[25:33]  # velocity at this point (double - 8 bytes)
-         self.heading = self.data[33:41]  # heading at this point (double - 8 bytes)
+         self.x = self.data[0:8]  # x position for path point (double - 8 bytes)
+         self.y = self.data[8:16]  # y position for path point (double - 8 bytes)
+         self.ts_ms = self.data[16:24]  # time stamp in ms of when this point should be hit (uint64_t - 8 bytes)
+         self.v = self.data[24:32]  # velocity at this point (double - 8 bytes)
+         self.heading = self.data[32:40]  # heading at this point (double - 8 bytes)
+
+
+
 #
 # class NodeManager:
 #     def __init__(self, id, ws):

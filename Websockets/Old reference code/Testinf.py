@@ -16,6 +16,16 @@ data = [Heading,Velocity,X,Y,ts_ms,State]
 test = b'1'+ Heading + Velocity + X
 length = [1]
 print(range(len(length)-1))
+
+# Example path packet data
+x = b'15.10100'
+y = b'34.35000'
+ts_ms = b'10506789'
+v = b'2.300000'
+heading = b'19.12345'
+path = x + y + ts_ms + v + heading
+print(path)
+print(type(path))
 # print(data)
 # print(type(data))
 # print(test)

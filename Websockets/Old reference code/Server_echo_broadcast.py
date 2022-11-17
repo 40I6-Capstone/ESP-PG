@@ -1,7 +1,8 @@
 #Server Echo
+import warnings
 import websockets
 import asyncio
-import warnings
+
 warnings.filterwarnings("ignore", category=DeprecationWarning)  #ignore deprecation warnings
 
 PORT = 7890
@@ -25,6 +26,6 @@ async def echo(websocket, path):
         print(error)
 
 #start the websocket server and keep it running forever
-start_server = websockets.serve(echo, "localhost", PORT)
+start_server = websockets.serve(echo, "192.168.0.57", PORT)
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()

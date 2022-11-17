@@ -10,7 +10,7 @@ import time
 warnings.filterwarnings("ignore", category=DeprecationWarning)  #ignore deprecation warnings
 
 async def listen(): #websocket library test
-    url = "ws://172.21.48.1:7890" #this is the local machine ip address with the port number
+    url = "ws://192.168.0.57:7890" #this is the local machine ip address with the port number
     async with websockets.connect(url) as ws: #connect to the server
         await ws.send("Hello Server!") #Send a greeting message
         # stay alive forever listening for messages
@@ -34,7 +34,7 @@ async def test(): #socket library test
     state = 'IDLE'
 
     print('********  CONNECT STATE  ********')
-    host = '10.0.0.187'
+    host = '192.168.0.57'
     port = 7890
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, port))

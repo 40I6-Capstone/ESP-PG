@@ -1,4 +1,8 @@
+
+# TODO remove the unused import
 import Packet
+
+# TODO comment this more, no issue with be a little more descriptive here
 
 class Node:
     def __init__(self, conn, address, heading, velocity, X, Y, ts_ms, State):

@@ -5,6 +5,12 @@ import sys
 import Packet  # Packet class
 import Node
 
+# TODO you have alot of stuff printing or asking for input for when you were testing,
+# you should make all of that condition so that this code can execute in a "production" or "testing" mode
+
+# TODO if you notice alot of the same await and reply patterns in the conversations, feel free to write a sub class as an fsm for that and just reuse that code
+# this will come in handy when we eventually have more conversations happening (unlikley in my mind)
+
 
 def clientthread(conn): # set up a new client thread
     buffer = b''
@@ -19,6 +25,7 @@ def clientthread(conn): # set up a new client thread
 def request_state(Node):
     Node.conn.sendall(b'1')  # send a 1 to indicate that we want node state
     buffer = b''
+    # TODO is there a sizeof() equivalent we can use incase the size of this data structure changes?
     while len(buffer) < 42:  # wait for the buffer to fill with packet data
         data = Node.conn.recv(42)  # packet size of 42 bytes for state
         buffer += data
@@ -38,10 +45,16 @@ def send_path(path_packet, Node):
 # - Register clients then enter IDLE state
 # - From IDLE we can: manually request a node state, receive a node state packet, or send a path packet to a node
 
-# TODO - update server to handle multiple nodes asyncronously
+# TODO, not really a todo, but aron will handle managing multiple, add in asynch functionality but on a callback basis so this single calss runs nicer
+# TODO - update server to handle multiple nodes asyncronously 
 # TODO - implement way for idle state to receive packet and go straight to node_state_receive
 
 
+# TODO Turn this into a "node manager" class that can be instantiated mutliple times as Aron's code establishes socket connections
+# He will take care of dealing with multiple of these node managers himself too
+# (take the socket in as a constructor argument, also take in a node ID)
+
+# TODO right now you've written everything to handle multiple nodes in this one manager, instead make this an object that handles one node
 def main():
     try:
 
@@ -62,8 +75,11 @@ def main():
         state = 'REGISTER_CLIENT'
         while 1:
             match state:
-                case 'REGISTER_CLIENT':
+                # TODO for this state, all you really need to do is 
+                case 'REGISTER_CLIENT': 
                     print('********  REGISTER_CLIENT STATE  ********')
+                    # TODO at this point Aron would have established the socket connection for you, and then passed it in alongside an ID
+                    # this state just needs to send that ID back to the node and setup any callbacks if youre doing asynch stuff
                     for i in range(tot_socket):
                         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -84,6 +100,7 @@ def main():
                     state = 'IDLE'
 
                 case 'IDLE':  # wait for function call or a request from the network
+                    # TODO cut the testing fluff or wrap it in some conditional for testing mode
                     print('********  IDLE STATE  ********')
                     selection = int(input('Enter 1 to request node state, 2 to send a path packet, 3 to check for a node state update: '))
                     if selection == 1:
@@ -116,6 +133,7 @@ def main():
                 case 'NODESTATE_RECEIVE':  # wait for response from node, once received, parse the data, and update internal current state
                     print('********  NODESTATE_RECEIVE STATE  ********')
                     buffer = b''
+                    # TODO directly get the size of how big this packet is, or make it a property of the packet itself that we change whenever the packet class changes
                     while len(buffer) < 41:  # wait for the buffer to fill with packet data
                         data = node_list[node_index].conn.recv(42)  # packet size of 42 bytes for state
                         buffer += data
@@ -133,7 +151,7 @@ def main():
 
                 case 'SENDPATH_AWAIT_REPLY':  # wait for ready signal from node
                     print('********  SENDPATH_AWAIT_REPLY STATE  ********')
-                    status = node_list[node_index].conn.recv(5)
+                    status = node_list[node_index].conn.recv(5)  #TODO Ideally this size is a property of the object too
                     if status == b'ready':
                         state = 'SENDPATH_SEND_STREAM'
                     # else:

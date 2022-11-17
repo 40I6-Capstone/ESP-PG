@@ -1,3 +1,7 @@
+# TODO I think till be helpful later for you to fully comment out what these objects are & what their methods do
+# it should make it easier later when maybe Aron needs to write something and he can just hover to read your comments
+# instead of having to read back through your code
+
 class Packet:
     def __init__(self, data):
         self.data = data
@@ -17,7 +21,8 @@ class Packet:
         if self.data[0:1] == b'2':
             return 2
 
-
+# TODO dont mix camel case and snake case (underscores), also classes are typically follow "ObjectName" as a naming scheme
+# Its probably fine to set all the internal variables to 0 and not include them in the constructor
 class node_State(Packet):
     def __init__(self,data, heading, velocity, X, Y, ts_ms, State):
         self.data = data
@@ -27,6 +32,15 @@ class node_State(Packet):
         self.Y = Y
         self.ts_ms = ts_ms
         self.State = State
+
+        #TODO I think its in your best interest to also call the parsing function as part of the constructor
+
+        # TODO i believe python has a mechanism to iterate through an object's data properties sequentially.
+        # So this function could probably be generalized and applied to the parent class instead?
+        # it should make creating new packets easier that way
+        # if the differing sizes is an issue, talk to me cause I have a few ideas
+        # i also think this is more accurately a "parsing" function than it is a conversion
+    
     def convertData(self):
         self.heading = self.data[0:8] # heading angle relative to start (double - 8 bytes)
         self.velocity = self.data[8:16] # current velocity (double - 8 bytes)

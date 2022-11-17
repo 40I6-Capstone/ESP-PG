@@ -40,6 +40,7 @@ def send_path(path_packet, Node):
 
 # TODO - update server to handle multiple nodes asyncronously
 # TODO - implement way for idle state to receive packet and go straight to node_state_receive
+# TODO - implement a way to handle nodes disconnecting
 
 
 def main():
@@ -53,7 +54,8 @@ def main():
         heading = b'19.12345'
         path = x + y + ts_ms + v + heading
 
-        host = '10.0.0.187'
+        # host = '10.0.0.187'
+        host = '192.168.0.57'
         port = 7890
         tot_socket = 1
         list_sock = []
@@ -117,7 +119,7 @@ def main():
                     print('********  NODESTATE_RECEIVE STATE  ********')
                     buffer = b''
                     while len(buffer) < 41:  # wait for the buffer to fill with packet data
-                        data = node_list[node_index].conn.recv(42)  # packet size of 42 bytes for state
+                        data = node_list[node_index].conn.recv(41)  # packet size of 42 bytes for state
                         buffer += data
                         print(buffer)
                     node_state_packet = Packet.node_State(buffer,0,0,0,0,0,0)

@@ -1,16 +1,21 @@
 # Echo server program
 import socket
 
-HOST = '10.0.0.187'                 # Symbolic name meaning all available interfaces
+HOST = '192.168.0.57'                 # Symbolic name meaning all available interfaces
 PORT = 7890             # Arbitrary non-privileged port
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
-    s.listen(2) # listen for this number of connections MAX
+    s.listen(1) # listen for this number of connections MAX
     conn, addr = s.accept()
     with conn:
         print('Connected by', conn)
         print('Address: ', addr[1])
         while True:
-            data = conn.recv(1024)
-            if not data: break
-            conn.sendall(data)
+            msg = input() + '\n'
+            conn.send(msg.encode())
+            # conn.send(b'node')
+            # data = conn.recv(8)
+            # print(type(data))
+            # print(data)
+            # if not data: break
+            # conn.sendall(data)

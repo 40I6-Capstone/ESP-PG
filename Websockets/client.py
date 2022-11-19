@@ -34,7 +34,7 @@ async def test(): #socket library test
     state = 'IDLE'
 
     print('********  CONNECT STATE  ********')
-    host = '10.0.0.187'
+    host = '192.168.0.57'
     port = 7890
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, port))
@@ -73,7 +73,7 @@ async def test(): #socket library test
                 case 'PATH_RECEIVE':
                     print('********  PATH_RECEIVE STATE  ********')
                     new_path.data = s.recv(40)
-                    new_path.convertData() # convert packet data to update current path data
+                    new_path.parseData() # convert packet data to update current path data
                     state = 'RESPOND_CHECK'
 
                 case 'RESPOND_CHECK':

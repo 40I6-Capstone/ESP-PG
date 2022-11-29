@@ -43,6 +43,9 @@ class node_state(Packet):  # packet to hold data for the node state
 
 
 class path_packet(Packet):  # packet to hold data for path planning
+    # TODO if we are passing in the data array, why does the constructor also take in the other values? it should be one or the other no?
+    # TODO if you expect two different ways of creating this object (which i think is probably reasonable) then try to create "multiple constructors"
+    # https://medium.com/@yourblogcoach1/multiple-constructors-in-python-97dac362a515
     def __init__(self, data, x, y, velocity, heading, ts_ms):
         self.data__ = data
         self.packet_size__ = 40
@@ -51,5 +54,5 @@ class path_packet(Packet):  # packet to hold data for path planning
         self.velocity = velocity
         self.heading = heading
         self.ts_ms = ts_ms
-
+        #TODO do you not want to automatically parse if the constructor has the data array passed into it?
         # self.parseData()

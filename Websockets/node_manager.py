@@ -13,8 +13,11 @@ class node_manager:
         self.new_node()
 
     def new_node(self):
+        # TODO having the testing mode stuck inside here feels awkward to change later, lets make it a global or class variable that can be "testing" or "production" or NULL (if forgotten about)
+        # The checks should still be the same (just making sure not to throw errors if the variable is null) only the definition location is somewhere else
         mode = 'testing'
         # mode = production
+        # TODO i dont think you need the try-catch here anymore. Theres a possibility the rest of the program might look for keyinput so this might mistakenly trigger
         try:
 
             # Example path packet data
@@ -56,7 +59,8 @@ class node_manager:
                                     # _thread.start_new_thread(clientthread, (conn,))
                         if mode == 'production':
                             # TODO at this point Aron would have established the socket connection for you, and then passed it in alongside an ID
-                            # this state just needs to send that ID back to the node and setup any callbacks if youre doing asynch stuff
+                            # this state just needs to send that ID back to the node and setup any callbacks if youre doing asynch stuff <-- make the decision about this soon
+                            # dont forget to send back the ID that this object was created with
                             node = Node.Node(self.conn,self.addr, 0, 0, 0, 0, 0, 0)
 
                         state = 'IDLE'
@@ -84,13 +88,20 @@ class node_manager:
                                 print('Invalid Selection')
                         if mode == 'production':
                             # TODO - wait for function call from Aron or a request from the network
+                            # in the IDLE state the parent script might ask this class to do something instead of just wait for something over the network
+                            # to handle this, a busy wait in the IDLE state is okay but you should create methods that will switch the system state 
+                            # eg. sendPath() (see fsm) that Aron can call and pass an array of path points in (each to be 1 packet), and then the FSM state switches to the approrpriate state and sends the data accordingly
+                            # feel free to talk to me about this
                             state = 'IDLE' #Loop in idle for now but this needs to be changed
+
 
                     case 'REQUEST_NODE_STATE':
                         if mode == 'testing':
                             print('********  REQUEST_NODE_STATE STATE  ********')
                             node_list[node_index].conn.send(b'node')
                         if mode == 'production':
+                            #TODO you're not sending "node" as a string array, youre sending the character that represents a node packet.
+                            #Enumerate (i think in python you just make a dictionary) for the packet codes to make this easier
                             node.conn.send(b'node')
                         state = 'NODESTATE_RECEIVE'
 
@@ -115,6 +126,7 @@ class node_manager:
                     case 'SEND_PATH_PACKET':  # parse received data and update internal current state
                         if mode == 'testing':
                             print('********  SEND_PATH_PACKET STATE  ********')
+                            #TODO not "path" as a string, but its code, leverage enumeration
                             node_list[node_index].conn.sendall(b'path')
                         if mode == 'production':
                             node.conn.sendall(b'path')
@@ -147,6 +159,7 @@ class node_manager:
                             status = node_list[node_index].conn.recv(node.status_size-1)
                         if mode == 'production':
                             status = node.conn.recv(node.status_size-1)
+                            # TODO let's use 1 character instead of 4 for the check maybe? Unless you have reasoning as to why you wanted a full word
                         if status == b'good':
                             state = 'IDLE'
                         elif status == b'nope':

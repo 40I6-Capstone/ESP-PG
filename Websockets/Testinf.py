@@ -5,25 +5,36 @@ import Packet
 # byte_heading = bytearray(struct.pack("f", heading))
 # print(struct_heading)
 
+packet_type = { # dictionary for packet type
+    "who_am_i" : '0',
+    "node" : '1',
+    "path" : '2'
+}
+
+print(str.encode(packet_type["node"]))
+print(type(str.encode(packet_type["node"])))
+print(type(b'1'))
+# for index, type in enumerate(packet_type):
+#     print(index, type)
 
 
 
 # example Data for node_state:
 # for a bytes or bytearray object b, b[0] will be an integer representing the ASCII value of single bytes, while b[0:1] will be a bytes or bytearray object of length 1
 # example Data for current node_state:
-heading = b'30.64000'
-velocity = b'5.145000'
-x = b'2.980000'
-y = b'103.5000'
-ts_ms = b'10.00000'
-state = b'1'
-data = heading + velocity + x + y + ts_ms + state
-print(data)
-print(type(data))
-packet = Packet.node_state(data)
-print(vars(packet))
-packet.parseData()
-print(vars(packet))
+# heading = b'30.64000'
+# velocity = b'5.145000'
+# x = b'2.980000'
+# y = b'103.5000'
+# ts_ms = b'10.00000'
+# state = b'1'
+# data = heading + velocity + x + y + ts_ms + state
+# print(data)
+# print(type(data))
+# packet = Packet.node_state(data)
+# print(vars(packet))
+# packet.parseData()
+# print(vars(packet))
 # variables = [variable for variable in vars(packet)
 #         if not variable.startswith('__')
 #         and not variable.endswith('__')]

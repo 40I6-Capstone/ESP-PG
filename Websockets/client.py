@@ -2,6 +2,7 @@
 import socket
 import asyncio
 import warnings
+import websockets
 import struct
 import Packet
 import Node
@@ -10,7 +11,7 @@ import time
 warnings.filterwarnings("ignore", category=DeprecationWarning)  #ignore deprecation warnings
 
 async def listen(): #websocket library test
-    url = "ws://172.21.48.1:7890" #this is the local machine ip address with the port number
+    url = "ws://192.168.0.54:7890" #this is the local machine ip address with the port number
     async with websockets.connect(url) as ws: #connect to the server
         await ws.send("Hello Server!") #Send a greeting message
         # stay alive forever listening for messages
@@ -27,14 +28,14 @@ async def test(): #socket library test
     Y = b'103.5000'
     ts_ms = b'10.00000'
     State = b'1'
-    data = Heading+Velocity+X+Y+ts_ms+State
-    state_packet = Packet.Packet(data)
+    data__ = Heading+Velocity+X+Y+ts_ms+State
+    state_packet = Packet.Packet(data__)
 
 #   FSM for client
     state = 'IDLE'
 
     print('********  CONNECT STATE  ********')
-    host = '192.168.0.57'
+    host = '192.168.0.54'
     port = 7890
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, port))
@@ -54,20 +55,20 @@ async def test(): #socket library test
                 case 'IDLE':
                     print('********  IDLE STATE  ********')
                     received_data = s.recv(4)
-                    if received_data == b'node':
+                    if received_data == b'1':
                         state = 'SEND_STATE'
                     elif received_data == b'path':
                         state = 'PATH_ALLOCATION'
 
                 case 'SEND_STATE':
                     print('********  SEND_STATE STATE  ********')
-                    s.sendall(state_packet.data)
+                    s.sendall(state_packet.data__)
                     state = 'IDLE'
 
                 case 'PATH_ALLOCATION':
                     print('********  PATH_ALLOCATION STATE  ********')
                     new_path = Packet.path_packet(0,0,0,0,0,0)
-                    s.sendall(b'ready')
+                    s.sendall(b'r') # r for ready
                     state = 'PATH_RECEIVE'
 
                 case 'PATH_RECEIVE':
@@ -79,10 +80,10 @@ async def test(): #socket library test
                 case 'RESPOND_CHECK':
                     print('********  RESPOND_CHECK STATE  ********')
                     if new_path.data != 0:
-                        s.sendall(b'good')
+                        s.sendall(b'g')
                         state = 'IDLE'
                     else:
-                        s.sendall(b'nope')
+                        s.sendall(b'n')
                         state = 'PATH_ALLOCATION'
 
 

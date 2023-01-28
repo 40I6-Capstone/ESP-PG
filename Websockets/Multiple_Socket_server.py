@@ -19,8 +19,8 @@ def clientthread(conn): # set up a new client thread
 def request_state(Node):
     Node.conn.sendall(b'1')  # send a 1 to indicate that we want node state
     buffer = b''
-    while len(buffer) < 42:  # wait for the buffer to fill with packet data
-        data = Node.conn.recv(42)  # packet size of 42 bytes for state
+    while len(buffer) < 105:  # wait for the buffer to fill with packet data
+        data = Node.conn.recv(105)  # packet size of 42 bytes for state
         buffer += data
         print(buffer)
     packet = Packet()

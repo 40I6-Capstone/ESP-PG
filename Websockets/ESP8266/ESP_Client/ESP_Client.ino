@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
+#include "FiniteStateMachine.h"
 //#include <WebSocketsClient.h>
 
 WiFiClient client;
@@ -27,6 +28,16 @@ int i = 0;
   //use client.print() to send a string to server
 
 
+//define FSM states and working functions
+State IDLE_STATE = State(Idle);
+State SEND = State(send_state);
+State PATH_ALLOCATE = State(path_allocate);
+State PATH_RECEIVE = State(path_receive);
+State RESPOND_CHECK = State(response_check);
+
+//set the initial state for the FSM
+FSM stateMachine = FSM(Idle);
+
 void setup() {
   Serial.begin(115200); //baud rate for serial communication
 
@@ -51,30 +62,8 @@ void setup() {
       
   Serial.printf("[SETUP] Connected to Wifi \n");
         
-  state = 'I'; //Begin in idle state, "connect" state was built into setup()
-
-
 }
 
-
-
-char getMessage(int len){
-    char buffer[len];
-      
-    char c = client.read();
-      
-    if(i<(len-1))
-    {
-      buffer[i] = c;
-      i++;
-    }
-    
-    if(i==(len-1)){
-      Serial.println(buffer);
-    }
-
-    return *buffer;
-}
 
 void loop() {
 
@@ -92,23 +81,20 @@ void loop() {
       }
     }
 
-
-    while(client.connected()){
-      while(client.available()>0){
-        Serial.write(client.read());
-      }
-
-    }
-    if (client.available()) {
-      Serial.println("Inside Client Available loop");
-      char c = client.read();
-      Serial.print(c);
+    if(stateMachine.isInState(Idle)){
+      Serial.println("Idle State");
+      if(getMessage(4) == "node")
+        stateMachine.transitionTo(send_state);
+      else if(getMessage(4) == "path")
+        stateMachine.transitionTo(path_allocate);
     }
 
+  //THIS LINE IS CRITICAL
+  //do not remove the stateMachine.update() call, it is what makes this program 'tick'
+  stateMachine.update();
 
-//    char test[] = {'n','o','d','e'};
-//    client.write(test,4);
-//    delay(3000);
+
+
 
   /*
   FSM Definitions:
@@ -173,4 +159,39 @@ void loop() {
 //
 //  }
 
+}
+
+void Idle(){
+}
+
+void send_state(){
+}
+
+void path_allocate(){
+}
+
+void path_receive(){
+  
+}
+
+void response_check(){
+  
+}
+
+char getMessage(int len){
+    char buffer[len];
+      
+    char c = client.read();
+      
+    if(i<(len-1))
+    {
+      buffer[i] = c;
+      i++;
+    }
+    
+    if(i==(len-1)){
+      Serial.println(buffer);
+    }
+
+    return *buffer;
 }

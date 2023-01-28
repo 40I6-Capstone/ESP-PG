@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
-#include "FiniteStateMachine.h"
 //#include <WebSocketsClient.h>
 
 WiFiClient client;
@@ -9,7 +8,6 @@ WiFiClient client;
 const unsigned long duration = 5000;
 unsigned long timeLatestCycle = 0;
 boolean ledStatus;
-char state = 'I';
 
 const uint16_t port = 7890;
 const char *host = "192.168.0.57";
@@ -27,16 +25,7 @@ int i = 0;
   String data = Heading + Velocity + X + Y + ts_ms + State;
   //use client.print() to send a string to server
 
-
-//define FSM states and working functions
-State IDLE_STATE = State(Idle);
-State SEND = State(send_state);
-State PATH_ALLOCATE = State(path_allocate);
-State PATH_RECEIVE = State(path_receive);
-State RESPOND_CHECK = State(response_check);
-
-//set the initial state for the FSM
-FSM stateMachine = FSM(Idle);
+char state;
 
 void setup() {
   Serial.begin(115200); //baud rate for serial communication
@@ -61,6 +50,8 @@ void setup() {
   }
       
   Serial.printf("[SETUP] Connected to Wifi \n");
+
+  state = 'I'; // set to idle state by default
         
 }
 
@@ -81,21 +72,6 @@ void loop() {
       }
     }
 
-    if(stateMachine.isInState(Idle)){
-      Serial.println("Idle State");
-      if(getMessage(4) == "node")
-        stateMachine.transitionTo(send_state);
-      else if(getMessage(4) == "path")
-        stateMachine.transitionTo(path_allocate);
-    }
-
-  //THIS LINE IS CRITICAL
-  //do not remove the stateMachine.update() call, it is what makes this program 'tick'
-  stateMachine.update();
-
-
-
-
   /*
   FSM Definitions:
   C - CONNECT STATE
@@ -106,77 +82,60 @@ void loop() {
   R - RESPOND_CHECK STATE
   */
 
+  // FSM
+  switch (state){
 
-    
-//  switch (state){
-//
-//    case 'I':
-//      Serial.printf("[FSM] IDLE STATE \n");
-//      char buffer[4];
-//      
-//
-//      char c = client.read();
-//      
-//      if(i<3)
-//      {
-//        buffer[i] = c;
-//        i++;
-//      }
-//
-//      Serial.println(buffer);
-//      
-////      while (client.available() > 0)
-////      {
-////          char c = client.read();
-////          Serial.write(c);
-////      }
-////      
-//      delay(7000);
-//      state = 'S'; //move to SEND STATE
-//      break;
-//
-//    case 'S':
-//      Serial.printf("[FSM] SEND STATE \n");
-//      state = 'A';
-//      break;
-//
-//    case 'A':
-//      Serial.printf("[FSM] PATH ALLOCATION STATE \n");
-//      state = 'P';
-//      break;
-//
-//    case 'P':
-//      Serial.printf("[FSM] PATH RECEIVE STATE \n");
-//
-//      state = 'R';
-//      break;
-//
-//    case 'R':
-//      Serial.printf("[FSM] RESPOND_CHECK STATE \n");
-//
-//      state = 'I';
-//      break;
-//
-//  }
+    case 'I': // IDLE STATE
+      Serial.printf("[FSM] IDLE STATE \n");
+      if(strcmp(getMessage(4),"node")==0){
+        state = 'S'; // go to send_state
+        break;
+      }
+        
+      else if(strcmp(getMessage(4),"path")==0){
+        state = 'A'; //go to path allocation state
+        break;
+      }
+
+    case 'S': // SEND STATE
+      Serial.printf("[FSM] SEND STATE \n");
+      // TODO - add tx code to send current state to server
+      state = 'I'; // go back to idle state
+      break;
+
+    case 'A': // PATH ALLOCATION STATE
+      Serial.printf("[FSM] PATH ALLOCATION STATE \n");
+      // TODO - send 'ready' to server
+      state = 'P'; // go to path receive state
+      break;
+
+    case 'P': // PATH RECEIVE STATE
+      Serial.printf("[FSM] PATH RECEIVE STATE \n");
+      char* packet;
+      packet = getMessage(40);
+      // TODO - add code for converting received data 
+      state = 'R'; // go to respond check state
+      break;
+
+    case 'R': // RESPOND_CHECK STATE
+      Serial.printf("[FSM] RESPOND_CHECK STATE \n");
+      if(strcmp(getMessage(4),"good")==0){
+        state = 'I'; // go back to idle
+        break;
+      }
+        
+      else if(strcmp(getMessage(4),"nope")==0){
+        state = 'A'; //go back to allocation state
+        break;
+      }
+      
+      state = 'I'; // default state is idle
+      break;
+
+  }
 
 }
 
-void Idle(){
-}
-
-void send_state(){
-}
-
-void path_allocate(){
-}
-
-void path_receive(){
-  
-}
-
-void response_check(){
-  
-}
 
 char getMessage(int len){
     char buffer[len];
@@ -193,5 +152,7 @@ char getMessage(int len){
       Serial.println(buffer);
     }
 
-    return *buffer;
+    return buffer;
 }
+
+// TODO - write a convert data function

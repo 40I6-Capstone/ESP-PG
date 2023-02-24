@@ -1,7 +1,7 @@
 # Echo server program
 import socket
 
-HOST = '192.168.0.57'                 # Symbolic name meaning all available interfaces
+HOST = '192.168.2.23'                 # Symbolic name meaning all available interfaces
 PORT = 7890             # Arbitrary non-privileged port
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))

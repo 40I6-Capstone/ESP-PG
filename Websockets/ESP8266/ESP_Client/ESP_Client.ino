@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
+#include <stdio.h>
 //#include <WebSocketsClient.h>
 
 WiFiClient client;
@@ -9,8 +10,8 @@ const unsigned long duration = 5000;
 unsigned long timeLatestCycle = 0;
 boolean ledStatus;
 
-const uint16_t port = 7890;
-const char *host = "192.168.0.57";
+//const uint16_t port = 1234;
+//const char *host = "10.0.0.187";
 
 //int data = 0;
 int i = 0;
@@ -60,7 +61,7 @@ void loop() {
 
 //    check to make sure we are connected to the server otherwise wait and try again
   
-    if (!client.connect(host, port))
+    if (!client.connect("10.0.0.187", 1234))
     {
         Serial.println("Connection to host failed, Retrying...");
         delay(1000);
@@ -105,7 +106,7 @@ void loop() {
 
     case 'A': // PATH ALLOCATION STATE
       Serial.printf("[FSM] PATH ALLOCATION STATE \n");
-      // TODO - send 'ready' to server
+      client.print("ready");
       state = 'P'; // go to path receive state
       break;
 
@@ -137,7 +138,7 @@ void loop() {
 }
 
 
-char getMessage(int len){
+char* getMessage(int len){
     char buffer[len];
       
     char c = client.read();

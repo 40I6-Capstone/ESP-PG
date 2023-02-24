@@ -21,6 +21,6 @@ async def server(websocket, path):
         print(error)
 
 #start the websocket server and keep it running forever
-start_server = websockets.serve(server, "172.21.48.1", PORT)
+start_server = websockets.serve(server, "192.168.2.23", PORT)
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()

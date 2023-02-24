@@ -39,16 +39,17 @@ void setup() {
 		Serial.flush(); //Waits for the transmission of outgoing serial data to complete
 		delay(1000);
 	}
+  Serial.printf("before connect to wifi");
+	WiFiMulti.addAP("BELL864", "F7EAE5311517"); //ssid and password for wifi network
 
-	WiFiMulti.addAP("COGECO-CD3A0", "DF9CECOGECO"); //ssid and password for wifi network
-
+  Serial.printf("after connect to wifi");
 	//WiFi.disconnect();
-	while(WiFiMulti.run() != WL_CONNECTED) { //wait until we are connected to the wifi
-		delay(100);
-	}
-
+//	while(WiFiMulti.run() != WL_CONNECTED) { //wait until we are connected to the wifi
+//		delay(100);
+//	}
+  Serial.printf("after Wl connect");
 	// server address, port and URL
-	webSocket.begin("192.168.0.46", 7890, "/");//connect to websocket server - This IP will change based on your machine
+	webSocket.begin("192.168.2.23", 7890, "/");//connect to websocket server - This IP will change based on your machine
 
 	// event handler
 	webSocket.onEvent(webSocketEvent); //fires any time anything happens with the websocket server.

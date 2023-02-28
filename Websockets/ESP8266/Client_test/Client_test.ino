@@ -10,9 +10,18 @@
 
 WiFiClient client;
 
+int i=0;
+
 void setup() {
   Serial.begin(115200);
-  WiFi.begin("", "");
+
+  for(uint8_t t = 3; t > 0; t--) { //wait 3 seconds to begin connection & transmission
+    Serial.printf("[SETUP] BOOT WAIT %d...\n", t);
+    Serial.flush(); //Waits for the transmission of outgoing serial data to complete
+    delay(1000);
+  }
+  WiFi.persistent(false); // do not allow wifi configuration to persist in flash memory
+  WiFi.begin();
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
@@ -22,7 +31,7 @@ void setup() {
   Serial.println("WiFi connected");
   Serial.println("Connecting to server...");
 
-  if (!client.connect("", 1234)) {
+  if (!client.connect("192.168.2.23", 1234)) {
     Serial.println("Connection failed");
     return;
   }
@@ -32,13 +41,40 @@ void setup() {
 
 void loop() {
   // Send a message to the server
-  client.print("Hello from ESP32 or ESP8266");
+  client.print("Hello from ESP8266");
 
+  char* test;
+  test = getMessage(6);
+  Serial.print(test);
+//
+//  if(test.compareTo("Hello")==0){
+//    Serial.print("Success");
+//  }
+  
   // Wait for the server to respond
-  while (client.available()) {
-    char c = client.read();
-    Serial.write(c);
-  }
+//  if(strcmp(test,"Hello")==0){
+//    Serial.print("Success");
+//  }
+//  while (client.available()) {
+//    char c = client.read();
+//    Serial.write(c);
+//  }
 
   delay(1000);
+}
+
+char* getMessage(int len){
+    char buffer[len];
+
+    if(client.available()){
+       while(i<(len-1)){
+          char c = client.read();
+          buffer[i] = c;
+          i++;
+       }
+       //i=0;
+       Serial.println(buffer);
+    }
+
+    return buffer;
 }

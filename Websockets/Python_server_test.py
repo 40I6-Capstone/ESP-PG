@@ -18,10 +18,13 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
 
         # Receive the message from the client
         message = client_socket.recv(1024).decode('utf-8')
-        print(f"Received message: {message}")
+        if(message == "Hello from ESP8266"):
+            print(f"Received message: {message}")
+        else:
+            print("Message not equal")
 
         # Send a response back to the client
-        response = "Hello from Python server"
+        response = "Hello"
         client_socket.sendall(response.encode('utf-8'))
         print(f"Sent response: {response}")
 

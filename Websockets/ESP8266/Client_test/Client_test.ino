@@ -11,6 +11,23 @@
 WiFiClient client;
 
 int i=0;
+char buffer[6];
+
+void getMessage(int len){
+//    char buffer[len];
+
+    if(client.available()){
+       while(i<(len-1)){
+          char c = client.read();
+          buffer[i] = c;
+          i++;
+       }
+       i=0;
+       Serial.println(buffer);
+    }
+
+//    return buffer;
+}
 
 void setup() {
   Serial.begin(115200);
@@ -43,13 +60,13 @@ void loop() {
   // Send a message to the server
   client.print("Hello from ESP8266");
 
-  char* test;
-  test = getMessage(6);
+  getMessage(6);
+  String test = buffer;
   Serial.print(test);
 //
-//  if(test.compareTo("Hello")==0){
-//    Serial.print("Success");
-//  }
+  if(test.compareTo("Hello")==0){
+    Serial.print("Success");
+  }
   
   // Wait for the server to respond
 //  if(strcmp(test,"Hello")==0){
@@ -61,20 +78,4 @@ void loop() {
 //  }
 
   delay(1000);
-}
-
-char* getMessage(int len){
-    char buffer[len];
-
-    if(client.available()){
-       while(i<(len-1)){
-          char c = client.read();
-          buffer[i] = c;
-          i++;
-       }
-       //i=0;
-       Serial.println(buffer);
-    }
-
-    return buffer;
 }

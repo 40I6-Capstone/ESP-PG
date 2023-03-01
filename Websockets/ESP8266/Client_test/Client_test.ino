@@ -38,7 +38,7 @@ void setup() {
     delay(1000);
   }
   WiFi.persistent(false); // do not allow wifi configuration to persist in flash memory
-  WiFi.begin();
+  WiFi.begin("BELL864","F7EAE5311517");
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
